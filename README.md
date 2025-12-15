@@ -41,7 +41,7 @@ Add to your `composer.json`:
 
 Then run:
 ```bash
-composer require restaurant-web/payment-faker
+composer require your-app/payment-faker
 ```
 
 ## Usage
