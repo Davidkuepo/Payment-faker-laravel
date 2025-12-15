@@ -71,7 +71,11 @@ class PaymentFakerClient
         
         // Generate payment URL (simulated)
         $paymentToken = $this->generateToken();
-        $paymentUrl = $this->baseUrl . '/payment/checkout?token=' . $paymentToken;
+        // Use /payment-faker/checkout route if baseUrl is the app URL, otherwise use /payment/checkout
+        $checkoutPath = str_contains($this->baseUrl, 'faker.payment.test') 
+            ? '/payment/checkout' 
+            : '/payment-faker/checkout';
+        $paymentUrl = $this->baseUrl . $checkoutPath . '?token=' . $paymentToken;
 
         // Store transaction
         $transaction = [
