@@ -4,7 +4,7 @@ namespace PaymentFaker;
 
 /**
  * PaymentFakerService - Service wrapper for easier integration
- * 
+ *
  * Provides a service interface similar to MyCoolPayService or CinetPayService
  */
 class PaymentFakerService
@@ -29,12 +29,6 @@ class PaymentFakerService
 
     /**
      * Initiate payment
-     * 
-     * @param array $paymentData
-     * @param string $successUrl
-     * @param string $cancelUrl
-     * @param string|null $webhookUrl
-     * @return array
      */
     public function initiatePayment(
         array $paymentData,
@@ -47,9 +41,6 @@ class PaymentFakerService
 
     /**
      * Check payment status
-     * 
-     * @param string $transactionRef
-     * @return array
      */
     public function checkStatus(string $transactionRef): array
     {
@@ -58,9 +49,8 @@ class PaymentFakerService
 
     /**
      * Handle webhook (simulates receiving webhook data)
-     * 
-     * @param array $payload Webhook payload
-     * @return bool
+     *
+     * @param  array  $payload  Webhook payload
      */
     public function handleWebhook(array $payload): bool
     {
@@ -71,12 +61,9 @@ class PaymentFakerService
 
     /**
      * Get the underlying client (for advanced usage)
-     * 
-     * @return PaymentFakerClient
      */
     public function getClient(): PaymentFakerClient
     {
         return $this->client;
     }
 }
-

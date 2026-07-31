@@ -6,19 +6,26 @@ use Exception;
 
 /**
  * PaymentFakerClient - A fake payment provider for testing
- * 
+ *
  * Simulates the behavior of payment providers like MyCoolPay or CinetPay
  * for testing purposes without making real API calls.
  */
 class PaymentFakerClient
 {
     private string $apiKey;
+
     private string $apiSecret;
+
     private string $baseUrl;
+
     private array $transactions = [];
+
     private bool $simulateDelays;
+
     private float $successRate; // 0.0 to 1.0 (e.g., 0.95 = 95% success rate)
+
     private int $delayMinMs;
+
     private int $delayMaxMs;
 
     public function __construct(
@@ -41,12 +48,13 @@ class PaymentFakerClient
 
     /**
      * Initiate a payment transaction
-     * 
-     * @param array $paymentData Payment data (amount, currency, description, etc.)
-     * @param string $successUrl URL to redirect after successful payment
-     * @param string $cancelUrl URL to redirect if payment is cancelled
-     * @param string|null $webhookUrl URL to send payment notifications
+     *
+     * @param  array  $paymentData  Payment data (amount, currency, description, etc.)
+     * @param  string  $successUrl  URL to redirect after successful payment
+     * @param  string  $cancelUrl  URL to redirect if payment is cancelled
+     * @param  string|null  $webhookUrl  URL to send payment notifications
      * @return array Response containing transaction_ref and payment_url
+     *
      * @throws Exception
      */
     public function initiatePayment(
@@ -68,14 +76,14 @@ class PaymentFakerClient
 
         // Generate transaction reference
         $transactionRef = $paymentData['transaction_id'];
-        
+
         // Generate payment URL (simulated)
         $paymentToken = $this->generateToken();
         // Use /payment-faker/checkout route if baseUrl is the app URL, otherwise use /payment/checkout
-        $checkoutPath = str_contains($this->baseUrl, 'faker.payment.test') 
-            ? '/payment/checkout' 
+        $checkoutPath = str_contains($this->baseUrl, 'faker.payment.test')
+            ? '/payment/checkout'
             : '/payment-faker/checkout';
-        $paymentUrl = $this->baseUrl . $checkoutPath . '?token=' . $paymentToken;
+        $paymentUrl = $this->baseUrl.$checkoutPath.'?token='.$paymentToken;
 
         // Store transaction
         $transaction = [
@@ -112,16 +120,17 @@ class PaymentFakerClient
     /**
      * Simulate payment approval (for testing)
      * This is called internally or can be called manually for testing
-     * 
-     * @param string $transactionRef Transaction reference
-     * @param bool|null $approve If null, uses success rate probability
+     *
+     * @param  string  $transactionRef  Transaction reference
+     * @param  bool|null  $approve  If null, uses success rate probability
      * @return array Updated transaction data
+     *
      * @throws Exception
      */
     public function approvePayment(string $transactionRef, ?bool $approve = null): array
     {
-        if (!isset($this->transactions[$transactionRef])) {
-            throw new Exception('Transaction not found: ' . $transactionRef);
+        if (! isset($this->transactions[$transactionRef])) {
+            throw new Exception('Transaction not found: '.$transactionRef);
         }
 
         $transaction = &$this->transactions[$transactionRef];
@@ -149,15 +158,16 @@ class PaymentFakerClient
 
     /**
      * Simulate payment cancellation
-     * 
-     * @param string $transactionRef Transaction reference
+     *
+     * @param  string  $transactionRef  Transaction reference
      * @return array Updated transaction data
+     *
      * @throws Exception
      */
     public function cancelPayment(string $transactionRef): array
     {
-        if (!isset($this->transactions[$transactionRef])) {
-            throw new Exception('Transaction not found: ' . $transactionRef);
+        if (! isset($this->transactions[$transactionRef])) {
+            throw new Exception('Transaction not found: '.$transactionRef);
         }
 
         $transaction = &$this->transactions[$transactionRef];
@@ -174,17 +184,18 @@ class PaymentFakerClient
 
     /**
      * Check payment status
-     * 
-     * @param string $transactionRef Transaction reference
+     *
+     * @param  string  $transactionRef  Transaction reference
      * @return array Transaction status data
+     *
      * @throws Exception
      */
     public function checkStatus(string $transactionRef): array
     {
         $this->simulateDelay();
 
-        if (!isset($this->transactions[$transactionRef])) {
-            throw new Exception('Transaction not found: ' . $transactionRef);
+        if (! isset($this->transactions[$transactionRef])) {
+            throw new Exception('Transaction not found: '.$transactionRef);
         }
 
         $transaction = $this->transactions[$transactionRef];
@@ -210,15 +221,16 @@ class PaymentFakerClient
 
     /**
      * Get transaction details
-     * 
-     * @param string $transactionRef Transaction reference
+     *
+     * @param  string  $transactionRef  Transaction reference
      * @return array Transaction data
+     *
      * @throws Exception
      */
     public function getTransaction(string $transactionRef): array
     {
-        if (!isset($this->transactions[$transactionRef])) {
-            throw new Exception('Transaction not found: ' . $transactionRef);
+        if (! isset($this->transactions[$transactionRef])) {
+            throw new Exception('Transaction not found: '.$transactionRef);
         }
 
         return $this->transactions[$transactionRef];
@@ -226,7 +238,7 @@ class PaymentFakerClient
 
     /**
      * Get all transactions (for testing/debugging)
-     * 
+     *
      * @return array All transactions
      */
     public function getAllTransactions(): array
@@ -245,13 +257,13 @@ class PaymentFakerClient
     /**
      * Trigger webhook callback (simulated)
      * In a real scenario, this would make an HTTP request to the webhook URL
-     * 
-     * @param string $transactionRef Transaction reference
+     *
+     * @param  string  $transactionRef  Transaction reference
      * @return bool Success status
      */
     public function triggerWebhook(string $transactionRef): bool
     {
-        if (!isset($this->transactions[$transactionRef])) {
+        if (! isset($this->transactions[$transactionRef])) {
             return false;
         }
 
@@ -259,7 +271,7 @@ class PaymentFakerClient
 
         // In a real implementation, you would make an HTTP POST request here
         // For now, we just return true to indicate the webhook was "sent"
-        
+
         // Example of what would be sent:
         $webhookData = [
             'transaction_ref' => $transactionRef,
@@ -279,13 +291,13 @@ class PaymentFakerClient
     /**
      * Get webhook payload for a transaction
      * Useful for testing webhook handlers
-     * 
-     * @param string $transactionRef Transaction reference
+     *
+     * @param  string  $transactionRef  Transaction reference
      * @return array|null Webhook payload or null if transaction not found
      */
     public function getWebhookPayload(string $transactionRef): ?array
     {
-        if (!isset($this->transactions[$transactionRef])) {
+        if (! isset($this->transactions[$transactionRef])) {
             return null;
         }
 
@@ -338,8 +350,8 @@ class PaymentFakerClient
 
     /**
      * Set success rate for automatic approval
-     * 
-     * @param float $rate Success rate between 0.0 and 1.0
+     *
+     * @param  float  $rate  Success rate between 0.0 and 1.0
      */
     public function setSuccessRate(float $rate): void
     {
@@ -348,7 +360,7 @@ class PaymentFakerClient
 
     /**
      * Get current success rate
-     * 
+     *
      * @return float Success rate
      */
     public function getSuccessRate(): float
@@ -356,4 +368,3 @@ class PaymentFakerClient
         return $this->successRate;
     }
 }
-
